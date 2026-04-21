@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lagos Trivia Night — Back to School</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Caveat:wght@600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #192b19;
+  color: #f0ece0;
+  font-family: 'Kalam', cursive;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(255,255,255,.03) 31px, rgba(255,255,255,.03) 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* HEADER */
+.hdr {
+  text-align: center;
+  padding: 28px 0 22px;
+  border-bottom: 2px solid rgba(245,200,66,.25);
+  margin-bottom: 28px;
+}
+.hdr-eye {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: rgba(245,200,66,.7);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.hdr h1 {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(30px, 7vw, 54px);
+  line-height: 1;
+  text-shadow: 3px 4px 0 rgba(0,0,0,.5);
+}
+.hdr h1 em { color: #f5c842; font-style: normal; }
+.hdr-tag {
+  margin-top: 8px;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: rgba(240,236,224,.35);
+  text-transform: uppercase;
+}
+
+/* LOBBY SCREEN */
+.s-icon {
+  font-size: 72px;
+  display: block;
+  margin-bottom: 16px;
+  animation: bob 3s ease-in-out infinite;
+}
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+.s-desc {
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(240,236,224,.7);
+  max-width: 480px;
+  margin: 0 auto 28px;
+}
+.rounds-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 560px;
+  margin: 0 auto 32px;
+}
+.r-chip {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 12px 10px;
+  text-align: left;
+}
+.r-chip .rnum {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #f5c842;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.r-chip .rlbl { font-size: 13px; color: rgba(240,236,224,.8); }
+.btn-start {
+  background: #f5c842;
+  color: #192b19;
+  border: none;
+  border-radius: 10px;
+  padding: 18px 52px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 28px rgba(245,200,66,.4);
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(245,200,66,.5); }
+
+/* QUIZ SCREEN */
+#quizScreen { display: none; }
+
+.scorebar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stile {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.stile .slbl {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(240,236,224,.4);
+  margin-bottom: 4px;
+}
+.stile .sval {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 26px;
+  line-height: 1;
+  color: #f5c842;
+}
+.sval.bl { color: #6ab0d4; }
+.sval.gr { color: #6dbe6d; }
+.sval.or { color: #f0a045; }
+
+.prog-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.prog-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f5c842, #f0a045);
+  border-radius: 99px;
+  transition: width .4s ease;
+  width: 0%;
+}
+.prog-txt {
+  font-size: 11px;
+  color: rgba(240,236,224,.4);
+  white-space: nowrap;
+}
+
+.rbanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+.rbanner .rico { font-size: 32px; }
+.rbanner .rtag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #f0a045;
+  margin-bottom: 2px;
+}
+.rbanner .rname {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(16px, 3.5vw, 22px);
+}
+
+.qcard {
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: 26px 22px;
+  transition: border-color .3s, background .3s;
+}
+.qcard.s-ok  { border-color: #6dbe6d; background: rgba(109,190,109,.07); }
+.qcard.s-bad { border-color: #e05555; background: rgba(224,85,85,.06); }
+
+.qmeta {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #f0a045;
+  margin-bottom: 12px;
+}
+.qtext {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 24px;
+}
+
+.opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,.05);
+  border: 2px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Kalam', cursive;
+  font-size: 15px;
+  color: #f0ece0;
+  transition: background .15s, border-color .15s, transform .12s;
+  width: 100%;
+}
+.opt:hover:not([disabled]) {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.3);
+  transform: translateY(-2px);
+}
+.opt[disabled] { cursor: default; }
+
+.badge {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.ba { background: rgba(232,93,138,.2); color: #e85d8a; border: 1.5px solid #e85d8a; }
+.bb { background: rgba(106,176,212,.2); color: #6ab0d4; border: 1.5px solid #6ab0d4; }
+.bc { background: rgba(240,160,69,.2);  color: #f0a045; border: 1.5px solid #f0a045; }
+.bd { background: rgba(155,125,232,.2); color: #9b7de8; border: 1.5px solid #9b7de8; }
+
+.opt.oc { background: rgba(109,190,109,.18) !important; border-color: #6dbe6d !important; }
+.opt.oc .badge { background: #6dbe6d !important; color: #0f1f0f !important; border-color: #6dbe6d !important; }
+.opt.ow { background: rgba(224,85,85,.15) !important; border-color: #e05555 !important; opacity: .75; }
+.opt.ow .badge { background: #e05555 !important; color: #fff !important; border-color: #e05555 !important; }
+
+.feedback {
+  display: none;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  animation: up .25s ease;
+}
+.feedback.show { display: block; }
+.fb-ok  { background: rgba(109,190,109,.12); border: 1px solid rgba(109,190,109,.35); }
+.fb-bad { background: rgba(224,85,85,.1);   border: 1px solid rgba(224,85,85,.3); }
+.fb-verd {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.fb-ok  .fb-verd { color: #6dbe6d; }
+.fb-bad .fb-verd { color: #e05555; }
+.fb-expl { font-size: 14px; color: rgba(240,236,224,.7); line-height: 1.6; }
+
+@keyframes up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.btn-next {
+  display: none;
+  width: 100%;
+  background: transparent;
+  border: 2px solid rgba(240,236,224,.25);
+  border-radius: 10px;
+  padding: 15px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 17px;
+  color: #f0ece0;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .12s;
+  letter-spacing: 1px;
+}
+.btn-next:hover { background: rgba(255,255,255,.07); border-color: rgba(240,236,224,.5); transform: translateY(-2px); }
+.btn-next.show { display: block; animation: up .25s ease; }
+
+/* ROUND COMPLETE */
+#rcScreen { display: none; text-align: center; padding: 50px 20px; animation: up .35s ease; }
+.rc-ico { font-size: 60px; margin-bottom: 14px; }
+.rc-ttl { font-family: 'Permanent Marker', cursive; font-size: 28px; margin-bottom: 8px; }
+.rc-score { font-family: 'Permanent Marker', cursive; font-size: 80px; color: #f5c842; line-height: 1; margin: 12px 0; }
+.rc-msg { font-size: 16px; color: rgba(240,236,224,.65); max-width: 440px; margin: 0 auto 32px; line-height: 1.6; }
+.btn-cont {
+  background: #f5c842;
+  color: #192b19;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 40px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(245,200,66,.35);
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-cont:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(245,200,66,.5); }
+
+/* FINAL */
+#finalScreen { display: none; text-align: center; padding: 50px 20px; animation: up .4s ease; }
+.fin-trophy { font-size: 80px; margin-bottom: 16px; display: block; }
+.fin-ttl { font-family: 'Permanent Marker', cursive; font-size: 36px; color: #f5c842; margin-bottom: 6px; }
+.fin-score { font-family: 'Permanent Marker', cursive; font-size: 90px; color: #f0ece0; line-height: 1; margin: 8px 0; }
+.fin-grade {
+  display: inline-block;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 8px 22px;
+  border-radius: 6px;
+  border: 2px solid #f5c842;
+  color: #f5c842;
+  margin-bottom: 16px;
+}
+.fin-comment { font-family: 'Caveat', cursive; font-size: 20px; color: rgba(240,236,224,.65); max-width: 480px; margin: 0 auto 32px; line-height: 1.5; }
+.btn-restart {
+  background: transparent;
+  border: 2px solid rgba(240,236,224,.3);
+  border-radius: 10px;
+  padding: 14px 32px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 17px;
+  color: rgba(240,236,224,.7);
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-restart:hover { border-color: #f5c842; color: #f5c842; }
+
+/* WATERMARK FOOTER */
+.wm-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(15, 25, 15, 0.92);
+  border-top: 1px solid rgba(245, 200, 66, 0.2);
+  backdrop-filter: blur(8px);
+}
+.wm-desk {
+  font-family: 'Kalam', cursive;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(240, 236, 224, 0.35);
+  text-transform: uppercase;
+}
+.wm-brand {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 13px;
+  color: #f5c842;
+  letter-spacing: 1px;
+}
+.wm-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(245, 200, 66, 0.4);
+  flex-shrink: 0;
+}
+
+/* HEADER WATERMARK BADGE */
+.hdr-wm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 14px;
+  border: 1px solid rgba(245, 200, 66, 0.25);
+  border-radius: 20px;
+  background: rgba(245, 200, 66, 0.06);
+}
+.hdr-wm span:first-child {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(240, 236, 224, 0.4);
+}
+.hdr-wm strong {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 12px;
+  color: #f5c842;
+  letter-spacing: 0.5px;
+}
+
+/* LOBBY STYLES */
+.lobby-intro { text-align: center; }
+.lobby-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.lobby-card {
+  background: rgba(255,255,255,.05);
+  border: 2px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: 18px 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s, border-color .15s, transform .12s;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.lobby-card:hover:not(.lc-done) {
+  background: rgba(255,255,255,.09);
+  border-color: rgba(245,200,66,.5);
+  transform: translateY(-2px);
+}
+.lobby-card.lc-done {
+  border-color: #6dbe6d;
+  background: rgba(109,190,109,.07);
+  cursor: default;
+}
+.lobby-card.lc-done::after {
+  content: '✓ DONE';
+  position: absolute;
+  top: 10px; right: 12px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 10px;
+  color: #6dbe6d;
+  letter-spacing: 1px;
+}
+.lc-num {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #f0a045;
+  margin-bottom: 6px;
+}
+.lc-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+.lc-name {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 15px;
+  color: #f0ece0;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.lc-meta {
+  font-size: 11px;
+  color: rgba(240,236,224,.4);
+  letter-spacing: 1px;
+}
+.lc-score {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 13px;
+  color: #6dbe6d;
+  margin-top: 6px;
+}
+.lobby-total {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(240,236,224,.4);
+  margin-bottom: 6px;
+}
+#lobbyDone { color: #f5c842; font-family: 'Permanent Marker', cursive; font-size: 16px; }
+.lobby-bar {
+  width: 200px;
+  height: 5px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 8px auto 0;
+}
+.lobby-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f5c842, #6dbe6d);
+  border-radius: 99px;
+  transition: width .4s ease;
+  width: 0%;
+}
+
+/* quiz scorebar adjustment - show out of 20 */
+#sQ { color: #6ab0d4; }
+
+@media(max-width:560px){
+  .opts          { grid-template-columns: 1fr; }
+  .lobby-grid    { grid-template-columns: 1fr; }
+  .scorebar      { grid-template-columns: repeat(2, 1fr); }
+  .wm-brand      { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hdr">
+    <div class="hdr-eye">✦ Lagos Trivia Night · April 2026 ✦</div>
+    <h1>Back to <em>School</em></h1>
+    <div class="hdr-tag">The Red Carpet Hall · Victoria Island · April 26</div>
+    <div class="hdr-wm">
+      <span>From the desk of</span>
+      <strong>Mafias Creatives</strong>
+    </div>
+  </div>
+
+  <!-- LOBBY -->
+  <div id="lobbyScreen">
+    <div class="lobby-intro">
+      <span class="s-icon">🏫</span>
+      <p class="s-desc">
+        Think secondary school memories, morning assembly, last-minute cramming,
+        and that feeling of <em>"I know this… wait."</em><br><br>
+        Pick any round and play at your own pace. Come back anytime for the next one!
+      </p>
+    </div>
+    <div class="lobby-grid" id="lobbyGrid"></div>
+    <div class="lobby-total">
+      <span id="lobbyDone">0</span>&nbsp;of 6 rounds completed
+      <div class="lobby-bar"><div class="lobby-fill" id="lobbyFill"></div></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizScreen">
+    <div class="scorebar">
+      <div class="stile"><div class="slbl">Score</div><div class="sval" id="sScore">0</div></div>
+      <div class="stile"><div class="slbl">Question</div><div class="sval bl" id="sQ">1 / 20</div></div>
+      <div class="stile"><div class="slbl">Streak 🔥</div><div class="sval gr" id="sStreak">0</div></div>
+      <div class="stile"><div class="slbl">Best 🏅</div><div class="sval or" id="sBest">—</div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-txt" id="progTxt">0 / 20</div>
+    </div>
+    <div class="rbanner">
+      <span class="rico" id="rico">📖</span>
+      <div>
+        <div class="rtag" id="rtag">Round 1 of 6</div>
+        <div class="rname" id="rname">Core School Subjects</div>
+      </div>
+    </div>
+    <div class="qcard" id="qcard">
+      <div class="qmeta" id="qmeta">Question 1 of 120</div>
+      <div class="qtext" id="qtext"></div>
+      <div class="opts" id="optsGrid"></div>
+      <div class="feedback" id="fb">
+        <div class="fb-verd" id="fbVerd"></div>
+        <div class="fb-expl" id="fbExpl"></div>
+      </div>
+      <button class="btn-next" id="btnNext" onclick="advance()">Next Question →</button>
+    </div>
+  </div>
+
+  <!-- ROUND COMPLETE -->
+  <div id="rcScreen">
+    <div class="rc-ico" id="rcIco">🎓</div>
+    <div class="rc-ttl" id="rcTtl">Round Complete!</div>
+    <div class="rc-score" id="rcScore">0/200</div>
+    <div class="rc-msg" id="rcMsg"></div>
+    <button class="btn-cont" onclick="goLobby()">← Back to Round Select</button>
+  </div>
+
+  <!-- FINAL -->
+  <div id="finalScreen">
+    <span class="fin-trophy" id="finTrophy">🏆</span>
+    <div class="fin-ttl">All Rounds Complete!</div>
+    <div class="fin-score" id="finScore">0</div>
+    <div class="fin-grade" id="finGrade">A1</div>
+    <div class="fin-comment" id="finComment"></div>
+    <button class="btn-restart" onclick="restart()">📚 Play Again</button>
+  </div>
+
+</div>
+
+<!-- WATERMARK FOOTER -->
+<div class="wm-footer">
+  <div class="wm-desk">From the desk of</div>
+  <div class="wm-dot"></div>
+  <div class="wm-brand">Mafias Creatives</div>
+  <div class="wm-dot"></div>
+  <div class="wm-desk">Lagos Trivia Night 2026</div>
+</div>
+
+<script>
+var ROUNDS = [
+  { name:"Core School Subjects", tag:"Round 1 of 6", icon:"📖", qs:[
+    {q:"What is the chemical formula for water?",o:["H2O","CO2","NaCl","O2H"],a:0,e:"Water is H₂O — two hydrogen atoms bonded to one oxygen atom."},
+    {q:"What is called the powerhouse of the cell?",o:["Nucleus","Ribosome","Mitochondria","Golgi body"],a:2,e:"The mitochondria produces ATP, the energy currency of the cell."},
+    {q:"In what year did Nigeria gain independence?",o:["1955","1963","1960","1957"],a:2,e:"Nigeria gained independence from Britain on October 1, 1960."},
+    {q:"What is the capital city of Nigeria?",o:["Lagos","Ibadan","Kano","Abuja"],a:3,e:"Abuja became Nigeria's capital in 1991, replacing Lagos."},
+    {q:"What gas do plants absorb during photosynthesis?",o:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],a:2,e:"Plants absorb CO₂ and release O₂ during photosynthesis."},
+    {q:"What is the SI unit of electric current?",o:["Volt","Watt","Ohm","Ampere"],a:3,e:"The SI unit of electric current is the Ampere (A)."},
+    {q:"What is the longest river in Nigeria?",o:["River Benue","River Niger","River Osun","River Kaduna"],a:1,e:"The River Niger is Nigeria's longest river — the country is named after it."},
+    {q:"What is the boiling point of water in Celsius?",o:["90°C","95°C","100°C","110°C"],a:2,e:"Water boils at 100°C at standard atmospheric pressure."},
+    {q:"Which planet is known as the Red Planet?",o:["Jupiter","Venus","Saturn","Mars"],a:3,e:"Mars appears red due to iron oxide (rust) on its surface."},
+    {q:"What does DNA stand for?",o:["Deoxyribonucleic Acid","Diribonuclear Acid","Double Nucleic Acid","Deoxy Nitrogen Acid"],a:0,e:"DNA = Deoxyribonucleic Acid — it carries the genetic blueprint of living things."},
+    {q:"How many bones are in the adult human body?",o:["196","200","206","212"],a:2,e:"An adult human body has 206 bones. Babies are born with around 270–300."},
+    {q:"What is the chemical symbol for Gold?",o:["Go","Gd","Gl","Au"],a:3,e:"Gold's symbol is Au, from the Latin word 'Aurum'."},
+    {q:"Which gas makes up the most of Earth's atmosphere?",o:["Oxygen","Carbon dioxide","Argon","Nitrogen"],a:3,e:"Nitrogen makes up about 78% of Earth's atmosphere. Oxygen is about 21%."},
+    {q:"What is Ohm's Law?",o:["V = IR","P = IV","F = ma","E = mc²"],a:0,e:"Ohm's Law: V = IR — voltage equals current multiplied by resistance."},
+    {q:"What organ pumps blood around the human body?",o:["Liver","Lungs","Kidneys","Heart"],a:3,e:"The heart is the muscular organ responsible for pumping blood."},
+    {q:"What does WAEC stand for?",o:["West African Education Council","West African Examinations Council","West Africa Exam Centre","Western African Exam Council"],a:1,e:"WAEC = West African Examinations Council."},
+    {q:"Which subject covers demand, supply and GDP?",o:["Accounting","Commerce","Economics","Government"],a:2,e:"Economics covers macroeconomic concepts in the SS3 syllabus."},
+    {q:"What is the value of π (pi) to 2 decimal places?",o:["3.12","3.14","3.16","3.18"],a:1,e:"Pi (π) ≈ 3.14159, so 3.14 to 2 decimal places."},
+    {q:"What does NTA stand for?",o:["National Television Agency","Nigerian Television Authority","National Telecast Association","Nigerian Telecom Authority"],a:1,e:"NTA = Nigerian Television Authority — Nigeria's national broadcaster."},
+    {q:"What does JSS stand for in Nigerian schools?",o:["Junior School System","Joint School Studies","Junior Secondary School","Junior Study Standard"],a:2,e:"JSS = Junior Secondary School — the first three years of secondary education."}
+  ]},
+  { name:"Nigerian Literature", tag:"Round 2 of 6", icon:"📚", qs:[
+    {q:"Who wrote 'Things Fall Apart'?",o:["Wole Soyinka","Chinua Achebe","Chimamanda Adichie","Cyprian Ekwensi"],a:1,e:"Chinua Achebe wrote Things Fall Apart (1958), set in pre-colonial Igbo society."},
+    {q:"Who wrote 'Purple Hibiscus'?",o:["Buchi Emecheta","Flora Nwapa","Chimamanda Ngozi Adichie","Sefi Atta"],a:2,e:"Chimamanda Ngozi Adichie wrote Purple Hibiscus, published in 2003."},
+    {q:"Who was the first African Nobel Prize winner for Literature?",o:["Chinua Achebe","Ngugi wa Thiong'o","Wole Soyinka","Ben Okri"],a:2,e:"Wole Soyinka won the Nobel Prize for Literature in 1986."},
+    {q:"In which village does 'Things Fall Apart' take place?",o:["Mbanta","Onitsha","Umuofia","Abame"],a:2,e:"Things Fall Apart is set in Umuofia, a fictional Igbo village."},
+    {q:"What is the name of Okonkwo's father?",o:["Obierika","Nwoye","Ekwueme","Unoka"],a:3,e:"Okonkwo's father was Unoka — a lazy debtor Okonkwo was ashamed of."},
+    {q:"Who wrote 'The Lion and the Jewel'?",o:["Chinua Achebe","Wole Soyinka","J.P. Clark","Ola Rotimi"],a:1,e:"Wole Soyinka wrote The Lion and the Jewel — a play about tradition vs modernity."},
+    {q:"What is the father's name in 'Purple Hibiscus'?",o:["Chukwuemeka","Eugene Achike","Obiora","Ade Coker"],a:1,e:"Eugene Achike (Papa) is the authoritarian father in Purple Hibiscus."},
+    {q:"Who wrote 'Weep Not, Child'?",o:["Ngugi wa Thiong'o","Chinua Achebe","Wole Soyinka","Okot p'Bitek"],a:0,e:"Ngugi wa Thiong'o, a Kenyan author, wrote Weep Not, Child in 1964."},
+    {q:"In what year was 'Things Fall Apart' published?",o:["1955","1956","1958","1960"],a:2,e:"Things Fall Apart was first published in 1958 by William Heinemann."},
+    {q:"Who wrote 'Half of a Yellow Sun'?",o:["Sefi Atta","Buchi Emecheta","Chimamanda Ngozi Adichie","Flora Nwapa"],a:2,e:"Half of a Yellow Sun, set during the Biafran War, was written by Chimamanda Adichie."},
+    {q:"What is Okonkwo's greatest fear?",o:["The colonizers","Christianity","Becoming like his father","Being exiled"],a:2,e:"Okonkwo's deepest fear is being perceived as weak and lazy — like his father Unoka."},
+    {q:"Who is Nwoye in 'Things Fall Apart'?",o:["Okonkwo's brother","Okonkwo's eldest son","Okonkwo's friend","The village chief"],a:1,e:"Nwoye is Okonkwo's eldest son who converts to Christianity, devastating his father."},
+    {q:"Flora Nwapa is famous for being what?",o:["First Nigerian female senator","First African woman to publish a novel in English","First female governor in Africa","First African woman to win a Nobel Prize"],a:1,e:"Flora Nwapa's Efuru (1966) made her the first African woman to publish a novel in English."},
+    {q:"Who wrote 'Sozaboy'?",o:["Ken Saro-Wiwa","Wole Soyinka","Chinua Achebe","Helon Habila"],a:0,e:"Sozaboy was written by Ken Saro-Wiwa, the Nigerian activist executed in 1995."},
+    {q:"What is the title of Chimamanda Adichie's famous gender TED talk?",o:["We Are All Feminist","We Should All Be Feminists","All Women Are Brave","Africa Is Not a Country"],a:1,e:"'We Should All Be Feminists' — later published as a book."},
+    {q:"Who wrote 'The Concubine'?",o:["Buchi Emecheta","Flora Nwapa","Elechi Amadi","Cyprian Ekwensi"],a:2,e:"The Concubine was written by Elechi Amadi, a Nigerian author from Rivers State."},
+    {q:"Who wrote 'Second-Class Citizen'?",o:["Flora Nwapa","Sefi Atta","Buchi Emecheta","Adaeze Oreh"],a:2,e:"Second-Class Citizen was written by Buchi Emecheta, a pioneering Nigerian female author."},
+    {q:"In what year did Wole Soyinka win the Nobel Prize?",o:["1982","1984","1986","1988"],a:2,e:"Wole Soyinka won the Nobel Prize for Literature in 1986."},
+    {q:"Who wrote 'Chike and the River'?",o:["Wole Soyinka","Cyprian Ekwensi","Chinua Achebe","Ola Rotimi"],a:2,e:"Chike and the River was one of Chinua Achebe's beloved children's books."},
+    {q:"Why is Okonkwo exiled in 'Things Fall Apart'?",o:["He converts to Christianity","He accidentally kills a clansman's son","He refuses to pay debts","He insults the elders"],a:1,e:"Okonkwo accidentally kills Ezeudu's son when his gun goes off at a funeral, causing his exile."}
+  ]},
+  { name:"Nigerian Civics & History", tag:"Round 3 of 6", icon:"🇳🇬", qs:[
+    {q:"Who was Nigeria's first Prime Minister?",o:["Nnamdi Azikiwe","Obafemi Awolowo","Abubakar Tafawa Balewa","Ahmadu Bello"],a:2,e:"Sir Abubakar Tafawa Balewa was Nigeria's first and only Prime Minister, assassinated in 1966."},
+    {q:"In what year did Nigeria's first military coup happen?",o:["1965","1966","1967","1968"],a:1,e:"Nigeria's first military coup took place on January 15, 1966, led by Major Chukwuma Nzeogwu."},
+    {q:"How many states does Nigeria have?",o:["30","34","36","40"],a:2,e:"Nigeria has 36 states plus the Federal Capital Territory, Abuja."},
+    {q:"Who designed the Nigerian flag?",o:["Michael Taiwo Akinkunmi","Obafemi Awolowo","Nnamdi Azikiwe","Ralph Uwechue"],a:0,e:"Michael Taiwo Akinkunmi, a student in London, designed the Nigerian flag in a 1959 competition."},
+    {q:"What is Nigeria's national motto?",o:["Forward Ever, Backward Never","Unity and Faith, Peace and Progress","One Nation, One Destiny","Together We Rise"],a:1,e:"Nigeria's motto is 'Unity and Faith, Peace and Progress', adopted in 1978."},
+    {q:"Who was Nigeria's first military Head of State?",o:["Yakubu Gowon","Murtala Muhammed","Johnson Aguiyi-Ironsi","Olusegun Obasanjo"],a:2,e:"General Johnson Aguiyi-Ironsi became Nigeria's first military Head of State after the Jan 1966 coup."},
+    {q:"What year did Abuja replace Lagos as Nigeria's capital?",o:["1985","1988","1991","1993"],a:2,e:"Abuja officially became Nigeria's capital on December 12, 1991."},
+    {q:"Who was Nigeria's first President?",o:["Tafawa Balewa","Nnamdi Azikiwe","Obafemi Awolowo","Ahmadu Bello"],a:1,e:"Dr Nnamdi Azikiwe — Zik of Africa — was Nigeria's first President (1963–1966)."},
+    {q:"What does EFCC stand for?",o:["Economic and Financial Crimes Commission","Economics and Finance Crime Council","Enforcement and Financial Crimes Commission","Economic and Federal Crimes Committee"],a:0,e:"EFCC = Economic and Financial Crimes Commission, established to fight corruption."},
+    {q:"What is the highest court in Nigeria?",o:["Federal High Court","Court of Appeal","Supreme Court","National Industrial Court"],a:2,e:"The Supreme Court of Nigeria is the apex court and final court of appeal."},
+    {q:"How many geopolitical zones does Nigeria have?",o:["4","5","6","7"],a:2,e:"Nigeria has 6 geopolitical zones: NC, NE, NW, SE, SS, SW."},
+    {q:"Who led Nigeria during the Biafran Civil War?",o:["Murtala Muhammed","Olusegun Obasanjo","Yakubu Gowon","Johnson Aguiyi-Ironsi"],a:2,e:"General Yakubu Gowon led Nigeria during the 1967–1970 civil war."},
+    {q:"In what year did Nigeria become a Republic?",o:["1960","1961","1962","1963"],a:3,e:"Nigeria became a Federal Republic on October 1, 1963 — three years after independence."},
+    {q:"What does CBN stand for?",o:["Central Bank of Nigeria","Commercial Bank of Nigeria","Corporate Bank of Nigeria","Central Business of Nigeria"],a:0,e:"CBN = Central Bank of Nigeria — the country's apex monetary authority."},
+    {q:"Which Nigerian city is nicknamed 'The Centre of Excellence'?",o:["Abuja","Port Harcourt","Kano","Lagos"],a:3,e:"Lagos is officially nicknamed 'The Centre of Excellence'."},
+    {q:"Who founded the Action Group political party?",o:["Nnamdi Azikiwe","Ahmadu Bello","Obafemi Awolowo","Herbert Macaulay"],a:2,e:"Chief Obafemi Awolowo founded the Action Group (AG) in 1951."},
+    {q:"What does INEC stand for?",o:["Independent National Election Committee","Independent National Electoral Commission","Inter-Nigeria Elections Council","Internal National Electoral Commission"],a:1,e:"INEC = Independent National Electoral Commission, which conducts Nigerian elections."},
+    {q:"Which Nigerian state is called the 'Sunshine State'?",o:["Ekiti","Osun","Ondo","Ogun"],a:2,e:"Ondo State is nicknamed the Sunshine State."},
+    {q:"What does NASS stand for in Nigerian governance?",o:["National Authority of States","National Assembly","National Administrative Service","Nigerian Assembly of States"],a:1,e:"NASS = National Assembly — Nigeria's bicameral legislature."},
+    {q:"Who is Nigeria's only Nobel Prize winner?",o:["Chinua Achebe","Chimamanda Adichie","Wole Soyinka","Ngozi Okonjo-Iweala"],a:2,e:"Wole Soyinka won the Nobel Prize for Literature in 1986 — Nigeria's only Nobel laureate."}
+  ]},
+  { name:"Science & Mathematics", tag:"Round 4 of 6", icon:"🔬", qs:[
+    {q:"Newton's First Law is also known as the Law of what?",o:["Gravitation","Inertia","Acceleration","Action and Reaction"],a:1,e:"Newton's First Law is the Law of Inertia — objects stay at rest or in motion unless acted upon."},
+    {q:"What is the speed of light?",o:["200,000 km/s","250,000 km/s","300,000 km/s","350,000 km/s"],a:2,e:"The speed of light is approximately 300,000 km/s (3 × 10⁸ m/s)."},
+    {q:"What is the atomic number of Carbon?",o:["4","6","8","12"],a:1,e:"Carbon has an atomic number of 6 — it has 6 protons in its nucleus."},
+    {q:"What is Pythagoras' theorem?",o:["a² – b² = c²","a + b = c","a² + b² = c²","2a + b = c"],a:2,e:"Pythagoras: a² + b² = c² for any right-angled triangle."},
+    {q:"What is osmosis?",o:["Solute from high to low concentration","Water through a membrane from low to high solute concentration","Gases from high to low pressure","Ions through a charged membrane"],a:1,e:"Osmosis: water moves through a semi-permeable membrane from low to high solute concentration."},
+    {q:"What is the derivative of x²?",o:["x","2x","x²","2x²"],a:1,e:"The derivative of x² is 2x — multiply by the power, reduce the power by 1."},
+    {q:"Which organ produces insulin?",o:["Liver","Kidney","Pancreas","Spleen"],a:2,e:"The pancreas produces insulin. Insufficient insulin causes diabetes mellitus."},
+    {q:"What is the chemical symbol for Sodium?",o:["So","Sd","Na","Sn"],a:2,e:"Sodium's symbol is Na, from its Latin name Natrium."},
+    {q:"How many chambers does the human heart have?",o:["2","3","4","5"],a:2,e:"The heart has 4 chambers: left and right atria, and left and right ventricles."},
+    {q:"What is the unit of frequency?",o:["Newton","Hertz","Pascal","Joule"],a:1,e:"The unit of frequency is Hertz (Hz)."},
+    {q:"What is the formula for speed?",o:["Speed = Distance × Time","Speed = Time ÷ Distance","Speed = Distance ÷ Time","Speed = Force ÷ Mass"],a:2,e:"Speed = Distance ÷ Time."},
+    {q:"What is the chemical formula for table salt?",o:["KCl","CaCl₂","NaCl","MgCl₂"],a:2,e:"Table salt is Sodium Chloride — NaCl."},
+    {q:"A prime number is divisible only by what?",o:["Any odd number","1 and itself","2 and itself","No numbers"],a:1,e:"A prime number is divisible only by 1 and itself. Examples: 2, 3, 5, 7, 11."},
+    {q:"What type of lens is used in a magnifying glass?",o:["Concave lens","Plane lens","Convex lens","Bifocal lens"],a:2,e:"A magnifying glass uses a convex (converging) lens."},
+    {q:"What is the LCM of 4 and 6?",o:["6","8","12","24"],a:2,e:"The Lowest Common Multiple (LCM) of 4 and 6 is 12."},
+    {q:"What do mitochondria produce?",o:["Proteins","RNA","ATP (energy)","Hormones"],a:2,e:"Mitochondria produce ATP (adenosine triphosphate) — the main energy currency of the cell."},
+    {q:"What does AIDS stand for?",o:["Acute Immune Deficiency Syndrome","Acquired Immune Deficiency Syndrome","Acquired Immunity Defect Syndrome","Acute Immunity Disease Syndrome"],a:1,e:"AIDS = Acquired Immune Deficiency Syndrome, caused by the HIV virus."},
+    {q:"What percentage of the human body is water?",o:["45–50%","50–55%","60–70%","75–80%"],a:2,e:"The adult human body is approximately 60–70% water."},
+    {q:"What is the process of rocks breaking down by weather called?",o:["Erosion","Sedimentation","Weathering","Decomposition"],a:2,e:"Weathering is the breakdown of rocks by physical, chemical, or biological processes."},
+    {q:"What does HIV stand for?",o:["Human Immunity Virus","Human Immunodeficiency Virus","High Immune Virus","Human Infected Virus"],a:1,e:"HIV = Human Immunodeficiency Virus — the virus that causes AIDS."}
+  ]},
+  { name:"Nigerian School Life & WAEC", tag:"Round 5 of 6", icon:"✏️", qs:[
+    {q:"What does JAMB stand for?",o:["Junior Admissions and Matriculation Board","Joint Admissions and Matriculation Board","Joint Academic and Matriculation Board","Junior Academic and Matriculation Board"],a:1,e:"JAMB = Joint Admissions and Matriculation Board, which conducts the UTME."},
+    {q:"What does UTME stand for?",o:["United Tertiary Matriculation Exam","Unified Tertiary Matriculation Examination","Universal Tertiary Matriculation Exam","Unified Tertiary Matriculation Evaluation"],a:1,e:"UTME = Unified Tertiary Matriculation Examination."},
+    {q:"What does NYSC stand for?",o:["National Youth Service Corps","Nigerian Youth Service Corporation","National Youth Service Council","Nigerian Youth Service Commission"],a:0,e:"NYSC = National Youth Service Corps — compulsory for Nigerian graduates."},
+    {q:"What is the oldest university in Nigeria?",o:["University of Lagos","Obafemi Awolowo University","Ahmadu Bello University","University of Ibadan"],a:3,e:"University of Ibadan, established in 1948, is the oldest university in Nigeria."},
+    {q:"What does CRS stand for as a school subject?",o:["Christian Religious System","Christian Religious Studies","Cultural and Religious Studies","Christian and Religious Science"],a:1,e:"CRS = Christian Religious Studies. Its counterpart is IRS (Islamic Religious Studies)."},
+    {q:"What score range does A1 represent in WAEC?",o:["60–69%","70–74%","75–100%","80–100%"],a:2,e:"A1 in WAEC represents a score of 75–100%, the highest possible grade."},
+    {q:"What does NECO stand for?",o:["National Education Council of Nigeria","National Examinations Council","Nigerian Education and Curriculum Organisation","National Exam Coordinating Office"],a:1,e:"NECO = National Examinations Council, an alternative to WAEC."},
+    {q:"What does PTA stand for in school?",o:["Principal and Teacher Assembly","Parent Teacher Association","Parent and Teacher Administration","Primary Teaching Authority"],a:1,e:"PTA = Parent Teacher Association — they meet termly and collect levies."},
+    {q:"Which exam do Nigerian students take at the end of JS3?",o:["WAEC","JAMB","BECE","NECO"],a:2,e:"BECE = Basic Education Certificate Examination, taken at the end of JS3."},
+    {q:"What is the maximum possible JAMB score?",o:["300","350","400","450"],a:2,e:"The maximum JAMB score is 400 — four subjects at 100 marks each."},
+    {q:"Which university is nicknamed 'The Great Ife'?",o:["University of Lagos","University of Ibadan","Obafemi Awolowo University","Ahmadu Bello University"],a:2,e:"Obafemi Awolowo University in Ile-Ife, Osun State, is nicknamed The Great Ife."},
+    {q:"What does SSCE stand for?",o:["Senior School Certificate Exam","Secondary School Certificate Examination","Senior Secondary Certificate Examination","Standard Secondary Certificate Exam"],a:2,e:"SSCE = Senior Secondary Certificate Examination — the WAEC credential."},
+    {q:"How many academic terms in a Nigerian school year?",o:["2","3","4","5"],a:1,e:"A Nigerian academic year has 3 terms: First, Second, and Third term."},
+    {q:"What does ICT stand for in school?",o:["Information and Communication Technology","International Computer Technology","Integrated Computer Technology","Information Computing Tools"],a:0,e:"ICT = Information and Communication Technology."},
+    {q:"What are the opening words of Nigeria's national anthem?",o:["Nigeria we hail thee","Arise O Compatriots","Stand strong O Nigeria","We are Nigerians"],a:1,e:"The anthem begins: 'Arise O Compatriots, Nigeria's call obey…'"},
+    {q:"What is the nickname of the University of Lagos?",o:["UNILAG","The Ivory Tower","Jand University","The Citadel"],a:1,e:"University of Lagos is nicknamed 'The Ivory Tower'."},
+    {q:"What does OAU stand for?",o:["Old Academic University","Obafemi Awolowo University","Ondo Academic University","Ogun Academic Union"],a:1,e:"OAU = Obafemi Awolowo University, located in Ile-Ife, Osun State."},
+    {q:"What does SS stand for in Nigerian schools?",o:["School System","Senior Secondary","Secondary School","Student Studies"],a:1,e:"SS = Senior Secondary — SS1, SS2, and SS3 are the three senior years."},
+    {q:"What subject teaches about rocks, soil and climate?",o:["Biology","Chemistry","Geography","Social Studies"],a:2,e:"Geography covers physical features like rocks, soil, climate and landforms."},
+    {q:"What does ABU stand for?",o:["Abuja Business University","Ahmadu Bello University","African Business University","Abuja Baptist University"],a:1,e:"ABU = Ahmadu Bello University, located in Zaria, Kaduna State."}
+  ]},
+  { name:'"I Know This… Wait" Round', tag:"Round 6 of 6", icon:"🤔", qs:[
+    {q:"How many months in a year have 28 days?",o:["Only February","Only 2 months","4 months","All 12 months"],a:3,e:"Every single month has at least 28 days! The trick is in how the question is worded."},
+    {q:"A rooster sits on a roof. Which side does the egg roll off?",o:["Left side","Right side","The south-facing side","Roosters don't lay eggs"],a:3,e:"Roosters are male chickens. Only hens lay eggs — so there is no egg!"},
+    {q:"You have 3 mangoes and take away 2. How many do YOU have?",o:["1","2","3","None"],a:1,e:"You TOOK 2, so YOU personally have 2 mangoes. The 1 remaining belongs to whoever you took from."},
+    {q:"Which is heavier — a kg of iron or a kg of feathers?",o:["Iron is heavier","Feathers are heavier","They weigh exactly the same","Depends on temperature"],a:2,e:"Both weigh exactly 1 kilogram. The material doesn't change the mass!"},
+    {q:"What is Nigeria's full official name?",o:["Republic of Nigeria","United Nigeria","Federal Republic of Nigeria","Democratic Republic of Nigeria"],a:2,e:"Nigeria's full official name is the Federal Republic of Nigeria."},
+    {q:"What is the 15th letter of the English alphabet?",o:["M","N","O","P"],a:2,e:"Counting: A=1, B=2… M=13, N=14, O=15. The answer is O."},
+    {q:"How many seconds are in one hour?",o:["600","3,000","3,600","6,000"],a:2,e:"1 hour = 60 minutes × 60 seconds = 3,600 seconds."},
+    {q:"All 4 walls of a house face south. What colour is the bear outside?",o:["Brown","Black","White","There is no bear"],a:2,e:"If all 4 walls face south, the house is at the North Pole — only polar bears live there, and they are white!"},
+    {q:"What comes once in a minute, twice in a moment, never in a thousand years?",o:["The letter E","The letter M","The letter T","The letter I"],a:1,e:"The letter M — once in 'minute', twice in 'moment', never in 'a thousand years'."},
+    {q:"What gets wetter the more it dries?",o:["A sponge","A towel","Sand","A cloud"],a:1,e:"A towel gets wetter as it dries things — it absorbs moisture from everything it dries."},
+    {q:"A student scores 49% in WAEC. Have they passed?",o:["Yes, 49% is a pass","No, the minimum is 50%","Yes, anything above 45% passes","It depends on the subject"],a:1,e:"The WAEC minimum pass mark is 50% (C6). A score of 49% is a D7 — which is a fail."},
+    {q:"What word is spelled incorrectly in every dictionary?",o:["Wrongly","Misspell","Incorrectly","No word is misspelled"],a:2,e:"The word 'incorrectly' — that is literally what you are searching for!"},
+    {q:"How many times can you subtract 5 from 25?",o:["5 times","10 times","Only once","Unlimited times"],a:2,e:"Only once! After the first subtraction you have 20, not 25 — so you can't repeat it."},
+    {q:"Doctor gives you 3 tablets, take one every 30 mins. How long until they're gone?",o:["1.5 hours","1 hour","45 minutes","2 hours"],a:1,e:"Take 1st at 0 min, 2nd at 30 min, 3rd at 60 min — gone after 1 hour, not 1.5 hours!"},
+    {q:"A man legally cannot marry his widow's sister. Why not?",o:["Nigerian law forbids it","Islamic law forbids it","He is dead — he has no widow","It is culturally taboo"],a:2,e:"If the man has a WIDOW, he is already DEAD. A dead man cannot marry anyone."},
+    {q:"Can a living man in Lagos be buried in Abuja?",o:["Yes, if he requests it","No, you need state approval","No, different zones have rules","A living man cannot be buried anywhere"],a:3,e:"A LIVING man cannot be buried anywhere! You can only bury dead people."},
+    {q:"What has hands but cannot clap?",o:["A glove","A statue","A clock","A robot"],a:2,e:"A clock has hour and minute hands — but obviously cannot clap."},
+    {q:"How many animals did Moses take on the ark?",o:["2 of each","7 of each","14 of each","Moses took none — it was Noah"],a:3,e:"It was NOAH who built the ark, not Moses. Moses parted the Red Sea. Don't mix them up!"},
+    {q:"If today is Monday, what is the day after the day before yesterday?",o:["Saturday","Sunday","Monday","Tuesday"],a:1,e:"Day before yesterday from Monday = Saturday. The day AFTER Saturday = Sunday."},
+    {q:"A student born in 2000. In 2025, how old are they?",o:["Always 25","Always 24","Either 24 or 25","Impossible to know"],a:2,e:"If their birthday has passed in 2025, they are 25. If not yet, still 24. So either 24 or 25!"}
+  ]}
+];
+
+var rIdx=0, qIdx=0, score=0, streak=0, roundScore=0, picked=false;
+var BADGE_CLS=['ba','bb','bc','bd'];
+var KEYS=['A','B','C','D'];
+// Track completion: {roundIndex: score}
+var completed = {};
+
+function $(id){ return document.getElementById(id); }
+
+function buildLobby(){
+  var grid=$('lobbyGrid');
+  grid.innerHTML='';
+  var doneCount=Object.keys(completed).length;
+  $('lobbyDone').textContent=doneCount;
+  $('lobbyFill').style.width=(doneCount/6*100)+'%';
+
+  var meta=['20 questions · Core Subjects','20 questions · Literature','20 questions · Civics & History','20 questions · Science & Maths','20 questions · School Life','20 questions · Trick Questions'];
+
+  for(var i=0;i<ROUNDS.length;i++){
+    var R=ROUNDS[i];
+    var isDone=(completed[i]!==undefined);
+    var card=document.createElement('button');
+    card.className='lobby-card'+(isDone?' lc-done':'');
+    var scoreHtml='';
+    if(isDone){
+      var s=completed[i];
+      scoreHtml='<div class="lc-score">'+s+'/200 scored</div>';
+    }
+    card.innerHTML='<div class="lc-num">Round '+(i+1)+' of 6</div>'
+      +'<span class="lc-icon">'+R.icon+'</span>'
+      +'<div class="lc-name">'+R.name+'</div>'
+      +'<div class="lc-meta">'+meta[i]+'</div>'
+      +scoreHtml;
+    if(!isDone){
+      card.addEventListener('click', makeLaunch(i));
+    }
+    grid.appendChild(card);
+  }
+
+  // show final celebration if all done
+  if(doneCount===6){
+    $('lobbyScreen').style.display='none';
+    showFinal();
+  }
+}
+
+function makeLaunch(i){
+  return function(){
+    rIdx=i; qIdx=0; score=0; streak=0; roundScore=0; picked=false;
+    $('lobbyScreen').style.display='none';
+    $('quizScreen').style.display='block';
+    // reset best display
+    $('sBest').textContent = completed[i] !== undefined ? completed[i]+'/200' : '—';
+    loadQ();
+  };
+}
+
+function updateHUD(){
+  $('sScore').textContent  = score;
+  $('sQ').textContent      = (qIdx+1)+' / 20';
+  $('sStreak').textContent = streak;
+  var pct=(qIdx/20)*100;
+  $('progFill').style.width = pct+'%';
+  $('progTxt').textContent = qIdx+' / 20';
+}
+
+function loadQ(){
+  picked=false;
+  var R=ROUNDS[rIdx], Q=R.qs[qIdx];
+  $('rico').textContent = R.icon;
+  $('rtag').textContent = R.tag;
+  $('rname').textContent= R.name;
+  $('qmeta').textContent='Question '+(qIdx+1)+' of 20';
+  $('qtext').textContent= Q.q;
+  $('qcard').className  = 'qcard';
+  $('fb').className     = 'feedback';
+  $('fbVerd').textContent='';
+  $('fbExpl').textContent='';
+  $('btnNext').className= 'btn-next';
+
+  var g=$('optsGrid');
+  g.innerHTML='';
+  for(var i=0;i<Q.o.length;i++){
+    var btn=document.createElement('button');
+    btn.className='opt';
+    btn.setAttribute('data-i',i);
+    btn.innerHTML='<span class="badge '+BADGE_CLS[i]+'">'+KEYS[i]+'</span><span>'+Q.o[i]+'</span>';
+    btn.addEventListener('click', makeHandler(i));
+    g.appendChild(btn);
+  }
+  updateHUD();
+}
+
+function makeHandler(i){
+  return function(){ pick(i); };
+}
+
+function pick(chosen){
+  if(picked) return;
+  picked=true;
+  var Q=ROUNDS[rIdx].qs[qIdx];
+  var btns=document.querySelectorAll('.opt');
+  var correct=(chosen===Q.a);
+
+  for(var i=0;i<btns.length;i++){
+    btns[i].disabled=true;
+    var idx=parseInt(btns[i].getAttribute('data-i'));
+    if(idx===Q.a){ btns[i].classList.add('oc'); }
+    else if(idx===chosen && !correct){ btns[i].classList.add('ow'); }
+  }
+
+  if(correct){
+    score+=10; roundScore+=10; streak++;
+    $('qcard').className='qcard s-ok';
+    $('fbVerd').textContent='✓ Correct!  +10 points';
+    $('fb').className='feedback fb-ok show';
+  } else {
+    streak=0;
+    $('qcard').className='qcard s-bad';
+    $('fbVerd').textContent='✗ Not quite!';
+    $('fb').className='feedback fb-bad show';
+  }
+  $('fbExpl').textContent=Q.e;
+  $('btnNext').className='btn-next show';
+  $('sScore').textContent=score;
+  $('sStreak').textContent=streak;
+}
+
+function advance(){
+  qIdx++;
+  if(qIdx>=ROUNDS[rIdx].qs.length){ showRC(); return; }
+  loadQ();
+}
+
+function showRC(){
+  $('quizScreen').style.display='none';
+  $('rcScreen').style.display='block';
+  var max=200;
+  var pct=Math.round((score/max)*100);
+  $('rcIco').textContent= pct>=80?'🎓':pct>=60?'📚':'😅';
+  $('rcTtl').textContent= ROUNDS[rIdx].name+' — Done!';
+  $('rcScore').textContent= score+'/'+max;
+  var msg='';
+  if(pct>=90) msg='Outstanding! Your teacher would write "Excellent" in red pen.';
+  else if(pct>=70) msg='Good work! You clearly did not sleep during class.';
+  else if(pct>=50) msg='Average. You passed — barely, like a C6 in Maths.';
+  else msg='Hmm. Were you passing love notes instead of paying attention?';
+  $('rcMsg').textContent=msg;
+  // Save completion
+  completed[rIdx]=score;
+}
+
+function goLobby(){
+  $('rcScreen').style.display='none';
+  buildLobby();
+  $('lobbyScreen').style.display='block';
+}
+
+function showFinal(){
+  $('finalScreen').style.display='block';
+  // Sum all round scores
+  var totalScore=0;
+  for(var k in completed){ totalScore+=completed[k]; }
+  var max=1200;
+  var pct=Math.round((totalScore/max)*100);
+  $('finScore').textContent=totalScore+' / '+max;
+  var grade,gc,trophy,comment;
+  if(pct>=90){grade='A1 — DISTINCTION';gc='#f5c842';trophy='🏆';comment='Extraordinary! You paid attention in every class. Your school fees were not wasted!';}
+  else if(pct>=75){grade='A2 — EXCELLENT';gc='#6dbe6d';trophy='🥇';comment='Excellent! You clearly read your textbooks and did your homework.';}
+  else if(pct>=60){grade='B3 — VERY GOOD';gc='#6dbe6d';trophy='🥈';comment='Very good! A solid student — just a few chapters you may have skimmed.';}
+  else if(pct>=50){grade='C4 — CREDIT';gc='#6ab0d4';trophy='📚';comment='You passed! Like a C6 in WAEC Maths — technically a credit, but room to grow.';}
+  else if(pct>=40){grade='D7 — PASS';gc='#f0a045';trophy='😅';comment='You need to read more. Were you always copying from your neighbour?';}
+  else{grade='F9 — FAIL';gc='#e05555';trophy='📖';comment='Back to the library! Every Nigerian secondary student should know these. Try again!';}
+  $('finTrophy').textContent=trophy;
+  $('finGrade').textContent=grade;
+  $('finGrade').style.color=gc;
+  $('finGrade').style.borderColor=gc;
+  $('finComment').textContent=comment;
+}
+
+function restart(){
+  completed={};
+  rIdx=0;qIdx=0;score=0;streak=0;roundScore=0;picked=false;
+  $('finalScreen').style.display='none';
+  buildLobby();
+  $('lobbyScreen').style.display='block';
+}
+
+// Init
+buildLobby();
+</script>
+</body>
+</html>
